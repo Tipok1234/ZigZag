@@ -8,8 +8,10 @@ namespace Assets.Scripts.Model
     {
         public Transform Begin => _begin;
         public Transform End => _end;
+        public Transform SpawnCapsule => _spawnCapsule;
 
         [SerializeField] private Transform _begin;
         [SerializeField] private Transform _end;
+        [SerializeField] private Transform _spawnCapsule;
     }
 }

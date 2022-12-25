@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Assets.Scripts.Model;
+using Assets.Scripts.UI;
+using Assets.Scripts.Enum;
+using Assets.Scripts.Controller;
 
 namespace Assets.Scripts.Manager
 {
@@ -10,29 +13,43 @@ namespace Assets.Scripts.Manager
     {
         public event Action<Transform> GameStartedAction;
 
+        [SerializeField] private MainWindow _mainWindow;
+        [SerializeField] private GameWindow _gameWindow;
+        [SerializeField] private RestartWindow _restartWindow;
         [SerializeField] private PlayerModel _playerPrefab;
+        [SerializeField] private DeathTrigger _deathTrigger;
 
         [SerializeField] private Transform _playerPos;
         [SerializeField] private Transform _cubePos;
 
         private PlayerModel _player;
+        private DeathTrigger _deathTrig;
         private CubeModel _cubeModel;
+        private Transform _spawnResource;
+
+        private DataManager _dataManager;
+
+        private void Awake()
+        {
+            _dataManager = FindObjectOfType<DataManager>();
+        }
+
+
         private void Start()
         {
-            InstantiateOnStart();
+            _gameWindow.SetupScore(_dataManager.Score);
+            _mainWindow.StartGameAction += OnStartGame;
+            _restartWindow.RestartGameAction += OnRestartGame;
+            OptionWindow.SetupColorAction += OnSetupColor;
+        }
 
-            for (int i = 0; i < 20; i++)
-            {
-                var newCube =  PoolManager.Instance.GetCube(_cubePos);
-
-                int number = UnityEngine.Random.Range(0, 2);
-                if (number == 0)
-                    _cubePos.position = newCube.End.position;
-                else
-                    _cubePos.position = newCube.Begin.position;
-
-                _cubeModel = newCube;
-            }
+        private void OnDestroy()
+        {
+            // _deathTrigger.DeathAction -= OnDeath;
+            _mainWindow.StartGameAction -= OnStartGame;
+            _player.CollectedScoreAction -= OnCollectedScore;
+            _restartWindow.RestartGameAction -= OnRestartGame;
+            OptionWindow.SetupColorAction -= OnSetupColor;
         }
 
         private void Update()
@@ -41,13 +58,74 @@ namespace Assets.Scripts.Manager
                 return;
 
             if (_player.transform.position.x < PoolManager.Instance.ReturnPosition() + 100)
-                PoolManager.Instance.GetCube(_cubeModel.transform);
+            {
+                var cube = PoolManager.Instance.GetCube(PoolManager.Instance.ReturnLastPos());
+
+                //_spawnResource = cube.SpawnCapsule.transform;
+
+                PoolManager.Instance.GetCapsuleResource(cube.SpawnCapsule.transform);
+            }
+        }
+
+        private void OnSetupColor(ColorType colorType)
+        {
+            _player.SetColor(colorType);
+        }
+
+        private void OnCollectedScore()
+        {
+            _dataManager.AddScore(1);
+            _gameWindow.SetupScore(_dataManager.Score);
+        }
+
+        private void OnRestartGame()
+        {
+            _cubePos.position = new Vector3(-4.4f, 0f, 9.5f);
+            _player.DestroyObject();
+            _deathTrig.DestroyObject();
+            PoolManager.Instance.ClearModels();
+            StartGame();
+        }
+        private void OnStartGame()
+        {
+            StartGame();
+        }
+
+        private void OnDeath()
+        {
+            Debug.LogError("Death");
+            _restartWindow.ShowRestartWindow();
+        }
+        private void StartGame()
+        {   
+            InstantiateOnStart();
+
+            for (int i = 0; i < PoolManager.Instance.CubeModels.Count; i++)
+            {
+                var newCube = PoolManager.Instance.GetCube(_cubePos);
+
+                int number = UnityEngine.Random.Range(0, 2);
+                if (number == 0)
+                    _cubePos.position = newCube.End.position;
+                else
+                {
+                    _cubePos.position = newCube.Begin.position;
+                    PoolManager.Instance.GetCapsuleResource(newCube.SpawnCapsule);
+                }
+
+                _cubeModel = newCube;
+            }
         }
         private void InstantiateOnStart()
         {
             var newPlayer = Instantiate(_playerPrefab, _playerPos);
             _player = newPlayer;
+            var newTrigger = Instantiate(_deathTrigger, _playerPos);
+            _deathTrig = newTrigger;
+            newTrigger.GameStarted(_player.transform);
+            newTrigger.DeathAction += OnDeath;
             GameStartedAction?.Invoke(_player.transform);
+            _player.CollectedScoreAction += OnCollectedScore;
         }
     }
 }
