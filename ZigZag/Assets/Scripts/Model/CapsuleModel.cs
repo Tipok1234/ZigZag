@@ -8,7 +8,7 @@ namespace Assets.Scripts.Model
     {
         private void DestroyObject()
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

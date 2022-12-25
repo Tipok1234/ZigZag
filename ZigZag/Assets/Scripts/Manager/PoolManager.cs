@@ -20,7 +20,7 @@ namespace Assets.Scripts.Manager
         private List<CapsuleModel> _capsuleModels;
 
         private int _cubeCount = 30;
-        private int _capsuleCount = 20;
+        private int _capsuleCount = 30;
 
         public static PoolManager _instance;
 
@@ -78,10 +78,10 @@ namespace Assets.Scripts.Manager
             newCube.gameObject.SetActive(true);
             _cubeModels.Add(newCube);
 
-            //if (_cubeModels.Count >= 40)
+            //if (_cubeModels.Count >= 50)
             //{
-            //    _cubeModels.Remove(_cubeModels[0]);
-            //    _cubeModels[0].gameObject.SetActive(false);
+            //    _cubeModels[index].gameObject.SetActive(false);
+            //    index++;
             //}
 
             return _cubeModels[_cubeModels.Count - 1];

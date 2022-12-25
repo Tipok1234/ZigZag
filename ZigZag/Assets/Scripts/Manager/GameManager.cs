@@ -61,9 +61,9 @@ namespace Assets.Scripts.Manager
             {
                 var cube = PoolManager.Instance.GetCube(PoolManager.Instance.ReturnLastPos());
 
-                //_spawnResource = cube.SpawnCapsule.transform;
+                _spawnResource = cube.SpawnCapsule.transform;
 
-                PoolManager.Instance.GetCapsuleResource(cube.SpawnCapsule.transform);
+                PoolManager.Instance.GetCapsuleResource(_spawnResource);
             }
         }
 
@@ -88,6 +88,7 @@ namespace Assets.Scripts.Manager
         }
         private void OnStartGame()
         {
+            _gameWindow.SetupGameCanvas();
             StartGame();
         }
 

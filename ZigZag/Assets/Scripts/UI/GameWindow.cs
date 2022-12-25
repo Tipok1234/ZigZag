@@ -11,6 +11,7 @@ namespace Assets.Scripts.UI
     {
         [SerializeField] private Button _settingButton;
         [SerializeField] private Canvas _optionCanvas;
+        [SerializeField] private Canvas _gameCanvas;
         [SerializeField] private TMP_Text _scoreText;
 
         private void Awake()
@@ -27,6 +28,11 @@ namespace Assets.Scripts.UI
         public void SetupScore(int score)
         {
             _scoreText.text = "Score: " + score.ToString();
+        }
+
+        public void SetupGameCanvas()
+        {
+            _gameCanvas.enabled = !_gameCanvas.enabled;
         }
 
     }
