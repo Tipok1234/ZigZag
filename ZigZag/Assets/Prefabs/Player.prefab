@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f283faf5e9422c04291f3edda8f5e725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sphereRadius: 4
+  _sphereRadius: 1
   _speed: 5
   _myMaterial: {fileID: 2100000, guid: 0d7cae23ab26ef740a1dc1517b9eb76e, type: 2}
   _resourseLayer:

@@ -137,8 +137,6 @@ namespace Assets.Scripts.Manager
         {
             int number = Random.Range(0, 2);
 
-            Debug.LogError("Number: " + number);
-
             if (number == 0)
                 return _cubeModels[_cubeModels.Count - 1].Begin;
             else

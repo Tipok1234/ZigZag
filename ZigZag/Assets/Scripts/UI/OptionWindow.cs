@@ -10,10 +10,12 @@ namespace Assets.Scripts.UI
     public class OptionWindow : MonoBehaviour
     {
         public static event Action<ColorType> SetupColorAction;
+        public static event Action<bool> ClickAIStateAction;
 
         [SerializeField] private Button _skinColorGreenButton;
         [SerializeField] private Button _skinColorBlueButton;
         [SerializeField] private Button _skinColorRedButton;
+        [SerializeField] private Button _autoGameButton;
 
 
         [SerializeField] private Button _closeOptionButton;
@@ -26,6 +28,7 @@ namespace Assets.Scripts.UI
             _skinColorGreenButton.onClick.AddListener(SetGreenColor);
             _skinColorBlueButton.onClick.AddListener(SetBlueColor);
             _skinColorRedButton.onClick.AddListener(SetRedColor);
+            _autoGameButton.onClick.AddListener(AutoGame);
         }
 
         private void Close()
@@ -45,6 +48,11 @@ namespace Assets.Scripts.UI
         private void SetRedColor()
         {
             SetupColorAction?.Invoke(ColorType.Red);
+        }
+
+        private void AutoGame()
+        {
+            ClickAIStateAction?.Invoke(true);
         }
     }
 }

@@ -9,6 +9,9 @@ namespace Assets.Scripts.Model
     public class PlayerModel : MonoBehaviour
     {
         public event Action CollectedScoreAction;
+        public event Action AIMoveAction;
+
+        public bool IsAI => _isAI;
 
         [SerializeField] private float _sphereRadius;
         [SerializeField] private float _speed;
@@ -16,6 +19,7 @@ namespace Assets.Scripts.Model
         [SerializeField] private LayerMask _resourseLayer;
 
         private Vector3 _direction;
+        private bool _isAI = false;
 
 
         private void Start()
@@ -24,7 +28,11 @@ namespace Assets.Scripts.Model
         }
         private void FixedUpdate()
         {
-            if (Input.GetKey(KeyCode.S))
+
+            Debug.DrawLine(transform.position, transform.forward * 50, Color.red);
+            Debug.DrawLine(transform.position, -transform.right * 50, Color.yellow);
+
+            if (Input.GetKey(KeyCode.S) && !_isAI)
             {
                 if (_direction == Vector3.forward)
                 {
@@ -36,7 +44,24 @@ namespace Assets.Scripts.Model
                 }
             }
 
-            transform.position += _speed * _direction * Time.deltaTime;
+            if (_isAI)
+            {
+                var ray = new Ray(transform.position, transform.forward * 50);
+
+
+                if (Physics.Raycast(ray,out RaycastHit hit, 50f,_resourseLayer))
+                {
+                    if(hit.transform.TryGetComponent<CapsuleModel>(out CapsuleModel capsule))
+                    {
+                        transform.position += _speed * Vector3.forward * Time.deltaTime;
+                    }
+                }
+                else
+                    transform.position += _speed * Vector3.left * Time.deltaTime;
+            }
+
+            if (!_isAI)
+                transform.position += _speed * _direction * Time.deltaTime;
 
 
             if (Physics.CheckSphere(transform.position, _sphereRadius, _resourseLayer))
@@ -48,6 +73,7 @@ namespace Assets.Scripts.Model
                     {
                         capsuleModel.gameObject.SetActive(false);
                         CollectedScoreAction?.Invoke();
+
                     }
                 }
             }
@@ -59,19 +85,23 @@ namespace Assets.Scripts.Model
         }
         private void OnTriggerStay(Collider other)
         {
-            if(other.gameObject.tag == "Lifearea")
+            if (other.gameObject.tag == "Lifearea")
             {
                 Debug.LogError("Stay");
             }
         }
         private void OnTriggerExit(Collider other)
         {
-            if(other.gameObject.tag == "Lifearea")
+            if (other.gameObject.tag == "Lifearea")
             {
                 Debug.LogError("Death");
             }
         }
 
+        public void SetAI(bool stateAI)
+        {
+            _isAI = stateAI;
+        }
         public void SetColor(ColorType colorType)
         {
             switch (colorType)
@@ -92,6 +122,9 @@ namespace Assets.Scripts.Model
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _sphereRadius);
+
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireSphere(transform.position, 25);
         }
     }
 }

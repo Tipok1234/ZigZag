@@ -3310,7 +3310,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790399558}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -3339,6 +3339,7 @@ MonoBehaviour:
   _skinColorGreenButton: {fileID: 1514963358}
   _skinColorBlueButton: {fileID: 818560311}
   _skinColorRedButton: {fileID: 360784718}
+  _autoGameButton: {fileID: 672987402}
   _closeOptionButton: {fileID: 1975200354}
   _optionCanvas: {fileID: 1790399562}
 --- !u!1 &1821211281

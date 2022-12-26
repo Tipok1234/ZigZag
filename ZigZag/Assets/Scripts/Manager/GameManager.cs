@@ -27,6 +27,7 @@ namespace Assets.Scripts.Manager
         private CubeModel _cubeModel;
         private Transform _spawnResource;
 
+        private List<CapsuleModel> _capsuleModels = new List<CapsuleModel>();
         private DataManager _dataManager;
 
         private void Awake()
@@ -41,6 +42,7 @@ namespace Assets.Scripts.Manager
             _mainWindow.StartGameAction += OnStartGame;
             _restartWindow.RestartGameAction += OnRestartGame;
             OptionWindow.SetupColorAction += OnSetupColor;
+            OptionWindow.ClickAIStateAction += OnAIState;
         }
 
         private void OnDestroy()
@@ -50,11 +52,12 @@ namespace Assets.Scripts.Manager
             _player.CollectedScoreAction -= OnCollectedScore;
             _restartWindow.RestartGameAction -= OnRestartGame;
             OptionWindow.SetupColorAction -= OnSetupColor;
+            OptionWindow.ClickAIStateAction -= OnAIState;
         }
 
         private void Update()
         {
-            if (_cubeModel == null)
+            if (_cubeModel == null || _player == null)
                 return;
 
             if (_player.transform.position.x < PoolManager.Instance.ReturnPosition() + 100)
@@ -63,13 +66,29 @@ namespace Assets.Scripts.Manager
 
                 _spawnResource = cube.SpawnCapsule.transform;
 
-                PoolManager.Instance.GetCapsuleResource(_spawnResource);
+                var capsule = PoolManager.Instance.GetCapsuleResource(_spawnResource);
+                _capsuleModels.Add(capsule);
             }
+
+            //if (_player.IsAI)
+            //{
+            //    for (int i = 0; i < _capsuleModels.Count; i++)
+            //    {
+            //        if (_player.transform.position == _capsuleModels[i].transform.position)
+            //            _player.AIMove(_capsuleModels[i].transform);
+            //    }
+            //}
         }
 
         private void OnSetupColor(ColorType colorType)
         {
             _player.SetColor(colorType);
+        }
+
+        private void OnAIState(bool state)
+        {
+            _player.SetAI(state);
+
         }
 
         private void OnCollectedScore()
@@ -111,7 +130,8 @@ namespace Assets.Scripts.Manager
                 else
                 {
                     _cubePos.position = newCube.Begin.position;
-                    PoolManager.Instance.GetCapsuleResource(newCube.SpawnCapsule);
+                    var capsule = PoolManager.Instance.GetCapsuleResource(newCube.SpawnCapsule);
+                    _capsuleModels.Add(capsule);
                 }
 
                 _cubeModel = newCube;
