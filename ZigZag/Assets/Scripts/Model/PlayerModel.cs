@@ -14,6 +14,7 @@ namespace Assets.Scripts.Model
         [SerializeField] private float _speed;
         [SerializeField] private Material _myMaterial;
         [SerializeField] private LayerMask _resourseLayer;
+        [SerializeField] private Transform _aiPos;
 
         private Vector3 _direction;
         private bool _isAI = false;
@@ -21,15 +22,14 @@ namespace Assets.Scripts.Model
 
         private void Start()
         {
-            _direction = Vector3.zero;
+            _direction = Vector3.forward;
         }
-        private void FixedUpdate()
+        private void Update()
         {
 
-            Debug.DrawLine(transform.position, transform.forward * 50, Color.red);
-            Debug.DrawLine(transform.position, -transform.right * 50, Color.yellow);
+            Debug.DrawLine(transform.position, transform.forward * 10, Color.red);
 
-            if (Input.GetKey(KeyCode.S) && !_isAI)
+            if (Input.GetKeyDown(KeyCode.S) && !_isAI)
             {
                 if (_direction == Vector3.forward)
                 {
@@ -43,21 +43,17 @@ namespace Assets.Scripts.Model
 
             if (_isAI)
             {
-                var ray = new Ray(transform.position, transform.forward * 50);
+                var ray = new Ray(transform.position, transform.forward * 10);
 
-
-                if (Physics.Raycast(ray,out RaycastHit hit, 50f,_resourseLayer))
+                if (Physics.Raycast(ray, out RaycastHit hit, 10f, _resourseLayer))
                 {
-                    if(hit.transform.TryGetComponent<CapsuleModel>(out CapsuleModel capsule))
-                    {
-                        transform.position += _speed * Vector3.forward * Time.deltaTime;
-                    }
+                    transform.position += _speed * Vector3.forward * Time.deltaTime;
+
                 }
                 else
                     transform.position += _speed * Vector3.left * Time.deltaTime;
             }
-
-            if (!_isAI)
+            else
                 transform.position += _speed * _direction * Time.deltaTime;
 
 
@@ -119,9 +115,6 @@ namespace Assets.Scripts.Model
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _sphereRadius);
-
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireSphere(transform.position, 25);
         }
     }
 }

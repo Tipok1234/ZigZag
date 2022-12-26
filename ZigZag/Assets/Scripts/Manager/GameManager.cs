@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -26,7 +25,6 @@ namespace Assets.Scripts.Manager
         private PlayerModel _player;
         private DeathTrigger _deathTrig;
         private CubeModel _cubeModel;
-        private Transform _spawnResource;
 
         private List<CapsuleModel> _capsuleModels = new List<CapsuleModel>();
         private DataManager _dataManager;
@@ -40,6 +38,7 @@ namespace Assets.Scripts.Manager
         private void Start()
         {
             _gameWindow.SetupScore(_dataManager.Score);
+            _gameWindow.SetupScoreLife(_dataManager.ScoreLife);
             _mainWindow.StartGameAction += OnStartGame;
             _restartWindow.RestartGameAction += OnRestartGame;
             _optionWindow.SetupColorAction += OnSetupColor;
@@ -61,24 +60,33 @@ namespace Assets.Scripts.Manager
             if (_cubeModel == null || _player == null)
                 return;
 
-            if (_player.transform.position.x < PoolManager.Instance.ReturnPosition() + 100)
+
+            var lastPos = PoolManager.Instance.CubeModels[PoolManager.Instance.CubeModels.Count - 1];
+
+            if (Vector3.Distance(_player.transform.position, lastPos.transform.position) < 100)
             {
-                var cube = PoolManager.Instance.GetCube(PoolManager.Instance.ReturnLastPos());
+                var cubes = PoolManager.Instance.CubeModels;
+                var firstCube = cubes[0];
+                firstCube.gameObject.SetActive(false);
+                cubes.RemoveAt(0);
 
-                _spawnResource = cube.SpawnCapsule.transform;
+                if (GetNumber() == 0)
+                {
+                    var newPos = cubes[cubes.Count - 1].Begin.position;
+                    firstCube.transform.position = newPos;
+                }
+                else
+                {
+                    var newPos = cubes[cubes.Count - 1].End.position;
+                    firstCube.transform.position = newPos;
+                }
 
-                var capsule = PoolManager.Instance.GetCapsuleResource(_spawnResource);
-                _capsuleModels.Add(capsule);
+                firstCube.gameObject.SetActive(true);
+                cubes.Add(firstCube);
+
+                if (GetNumber() == 0)
+                    PoolManager.Instance.GetCapsuleResource(firstCube.SpawnCapsule.transform);
             }
-
-            //if (_player.IsAI)
-            //{
-            //    for (int i = 0; i < _capsuleModels.Count; i++)
-            //    {
-            //        if (_player.transform.position == _capsuleModels[i].transform.position)
-            //            _player.AIMove(_capsuleModels[i].transform);
-            //    }
-            //}
         }
 
         private void OnSetupColor(ColorType colorType)
@@ -115,19 +123,19 @@ namespace Assets.Scripts.Manager
 
         private void OnDeath()
         {
-            Debug.LogError("Death");
             _restartWindow.ShowRestartWindow();
+            _dataManager.AddScoreLife(1);
         }
         private void StartGame()
-        {   
+        {
+            _gameWindow.SetupScoreLife(_dataManager.ScoreLife);
             InstantiateOnStart();
 
             for (int i = 0; i < PoolManager.Instance.CubeModels.Count; i++)
             {
                 var newCube = PoolManager.Instance.GetCube(_cubePos);
 
-                int number = UnityEngine.Random.Range(0, 2);
-                if (number == 0)
+                if (GetNumber() == 0)
                     _cubePos.position = newCube.End.position;
                 else
                 {
@@ -149,6 +157,16 @@ namespace Assets.Scripts.Manager
             newTrigger.DeathAction += OnDeath;
             GameStartedAction?.Invoke(_player.transform);
             _player.CollectedScoreAction += OnCollectedScore;
+        }
+
+        private int GetNumber()
+        {
+            int number = UnityEngine.Random.Range(0, 2);
+
+            if (number == 0)
+                return 0;
+            else
+                return 1;
         }
     }
 }

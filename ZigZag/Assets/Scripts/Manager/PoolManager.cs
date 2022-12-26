@@ -40,8 +40,6 @@ namespace Assets.Scripts.Manager
 
             for (int i = 0; i < _cubeCount; i++)
             {
-                //var cube = Instantiate(_cubePrefab, _cubeParent);
-                //_cubeModels.Add(cube);
                 _cubeModels.Add(Instantiate(_cubePrefab, _cubeParent));
             }
 
@@ -49,8 +47,6 @@ namespace Assets.Scripts.Manager
             {
                 _capsuleModels.Add(Instantiate(_capsulePrefab, _capsuleParent));
             }
-
-            Debug.LogError("Count: " + _cubeModels.Count);
         }
         public CubeModel GetCube(Transform pos)
         {
@@ -58,7 +54,6 @@ namespace Assets.Scripts.Manager
             {
                 if (_cubeModels[i].gameObject.activeSelf == false)
                 {
-                    //Debug.LogError("POOL");
                     _cubeModels[i].transform.position = pos.position;
 
                     _cubeModels[i].gameObject.SetActive(true);
@@ -78,12 +73,6 @@ namespace Assets.Scripts.Manager
             newCube.gameObject.SetActive(true);
             _cubeModels.Add(newCube);
 
-            //if (_cubeModels.Count >= 50)
-            //{
-            //    _cubeModels[index].gameObject.SetActive(false);
-            //    index++;
-            //}
-
             return _cubeModels[_cubeModels.Count - 1];
         }
 
@@ -99,15 +88,12 @@ namespace Assets.Scripts.Manager
                 }
             }
 
-            for (int i = 0; i < _capsuleModels.Count; i++)
-            {
-                _capsuleModels[i].transform.position = resourceTransform.position;
-                _capsuleModels[i].gameObject.SetActive(true);
-                _capsuleModels.Add(Instantiate(_capsuleModels[i], resourceTransform));
-                return _capsuleModels[_capsuleModels.Count - 1];
-            }
+            var newRes = Instantiate(_capsulePrefab, resourceTransform);
+            newRes.transform.position = resourceTransform.position;
+            newRes.gameObject.SetActive(true);
+            _capsuleModels.Add(newRes);
 
-            return null;
+            return newRes;
         }
 
         public void ClearModels()
@@ -125,22 +111,7 @@ namespace Assets.Scripts.Manager
             }
 
             _cubeModels.Clear();
-            Debug.LogError("Count: " + _cubeModels.Count);
             SetupModels();
-        }
-        public float ReturnPosition()
-        {
-            return _cubeModels[_cubeModels.Count - 1].Begin.position.x;
-        }
-
-        public Transform ReturnLastPos()
-        {
-            int number = Random.Range(0, 2);
-
-            if (number == 0)
-                return _cubeModels[_cubeModels.Count - 1].Begin;
-            else
-                return _cubeModels[_cubeModels.Count - 1].End;
         }
     }
 }
