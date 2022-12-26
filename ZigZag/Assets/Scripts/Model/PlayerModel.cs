@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Enum;
 using System;
@@ -18,8 +16,6 @@ namespace Assets.Scripts.Model
 
         private Vector3 _direction;
         private bool _isAI = false;
-
-
         private void Start()
         {
             _direction = Vector3.forward;

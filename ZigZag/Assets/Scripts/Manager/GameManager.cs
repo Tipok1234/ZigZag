@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Assets.Scripts.Model;
@@ -12,6 +11,7 @@ namespace Assets.Scripts.Manager
     {
         public event Action<Transform> GameStartedAction;
 
+        [SerializeField] private AnimationWindow _animationWindow;
         [SerializeField] private OptionWindow _optionWindow;
         [SerializeField] private MainWindow _mainWindow;
         [SerializeField] private GameWindow _gameWindow;
@@ -25,8 +25,6 @@ namespace Assets.Scripts.Manager
         private PlayerModel _player;
         private DeathTrigger _deathTrig;
         private CubeModel _cubeModel;
-
-        private List<CapsuleModel> _capsuleModels = new List<CapsuleModel>();
         private DataManager _dataManager;
 
         private void Awake()
@@ -104,6 +102,8 @@ namespace Assets.Scripts.Manager
         {
             AudioManager.Instance.PlaySound();
             _dataManager.AddScore(1);
+            var newScore = PoolManager.Instance.GetScoreUI(_player.transform);
+            newScore.SetupScoreTextAnimation(1);
             _gameWindow.SetupScore(_dataManager.Score);
         }
 
@@ -141,7 +141,6 @@ namespace Assets.Scripts.Manager
                 {
                     _cubePos.position = newCube.Begin.position;
                     var capsule = PoolManager.Instance.GetCapsuleResource(newCube.SpawnCapsule);
-                    _capsuleModels.Add(capsule);
                 }
 
                 _cubeModel = newCube;

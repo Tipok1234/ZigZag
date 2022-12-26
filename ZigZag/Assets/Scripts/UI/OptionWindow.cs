@@ -12,13 +12,12 @@ namespace Assets.Scripts.UI
         public event Action<ColorType> SetupColorAction;
         public event Action<bool> ClickAIStateAction;
 
-
-        [SerializeField] private Toggle _autoGameToggle;
+        [SerializeField] private Button _AIGameButton;
+        [SerializeField] private Button _playerGameButton;
         [SerializeField] private Button _skinColorGreenButton;
         [SerializeField] private Button _skinColorBlueButton;
         [SerializeField] private Button _skinColorRedButton;
         [SerializeField] private Button _closeOptionButton;
-        [SerializeField] private TMP_Text _stateAutoButtonText;
         [SerializeField] private Canvas _optionCanvas;
 
         private void Awake()
@@ -28,7 +27,8 @@ namespace Assets.Scripts.UI
             _skinColorGreenButton.onClick.AddListener(SetGreenColor);
             _skinColorBlueButton.onClick.AddListener(SetBlueColor);
             _skinColorRedButton.onClick.AddListener(SetRedColor);
-            _autoGameToggle.onValueChanged.AddListener(AutoGame);
+            _AIGameButton.onClick.AddListener(AutoGame);
+            _playerGameButton.onClick.AddListener(PlayerGame);
         }
 
         private void Close()
@@ -54,20 +54,20 @@ namespace Assets.Scripts.UI
             SetupColorAction?.Invoke(ColorType.Red);
         }
 
-        private void AutoGame(bool state)
+        private void AutoGame()
         {
             AudioManager.Instance.PlaySound();
 
-            if (_autoGameToggle.isOn == true)
-            {
-                ClickAIStateAction?.Invoke(true);
-                _stateAutoButtonText.text = "ON";
-            }
-            else
-            {
-                ClickAIStateAction?.Invoke(false);
-                _stateAutoButtonText.text = "OFF";
-            }
+            ClickAIStateAction?.Invoke(true);
+            _AIGameButton.gameObject.SetActive(false);
+            _playerGameButton.gameObject.SetActive(true);
+        }
+
+        private void PlayerGame()
+        {
+            ClickAIStateAction?.Invoke(false);
+            _AIGameButton.gameObject.SetActive(true);
+            _playerGameButton.gameObject.SetActive(false);
         }
     }
 }

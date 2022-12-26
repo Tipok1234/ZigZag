@@ -1,7 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Model;
+using Assets.Scripts.UI;
 
 namespace Assets.Scripts.Manager
 {
@@ -12,15 +12,19 @@ namespace Assets.Scripts.Manager
 
         [SerializeField] private CubeModel _cubePrefab;
         [SerializeField] private CapsuleModel _capsulePrefab;
+        [SerializeField] private ScoreAnimationUI _scoreAnimationUI;
 
         [SerializeField] private Transform _cubeParent;
         [SerializeField] private Transform _capsuleParent;
+        [SerializeField] private Transform _scoreParent;
 
         private List<CubeModel> _cubeModels;
         private List<CapsuleModel> _capsuleModels;
+        private List<ScoreAnimationUI> _scoreAnimationUIs;
 
         private int _cubeCount = 30;
         private int _capsuleCount = 30;
+        private int _scoreCount = 10;
 
         public static PoolManager _instance;
 
@@ -37,6 +41,7 @@ namespace Assets.Scripts.Manager
         {
             _cubeModels = new List<CubeModel>();
             _capsuleModels = new List<CapsuleModel>();
+            _scoreAnimationUIs = new List<ScoreAnimationUI>();
 
             for (int i = 0; i < _cubeCount; i++)
             {
@@ -46,6 +51,11 @@ namespace Assets.Scripts.Manager
             for (int i = 0; i < _capsuleCount; i++)
             {
                 _capsuleModels.Add(Instantiate(_capsulePrefab, _capsuleParent));
+            }
+
+            for (int i = 0; i < _scoreCount; i++)
+            {
+                _scoreAnimationUIs.Add(Instantiate(_scoreAnimationUI, _scoreParent));
             }
         }
         public CubeModel GetCube(Transform pos)
@@ -94,6 +104,34 @@ namespace Assets.Scripts.Manager
             _capsuleModels.Add(newRes);
 
             return newRes;
+        }
+
+
+        public ScoreAnimationUI GetScoreUI(Transform scorePos)
+        {
+            for (int i = 0; i < _scoreAnimationUIs.Count; i++)
+            {
+                if (_scoreAnimationUIs[i].gameObject.activeSelf == false)
+                {
+                    _scoreAnimationUIs[i].transform.position = scorePos.position;
+                    _scoreAnimationUIs[i].gameObject.SetActive(true);
+
+                    return _scoreAnimationUIs[i];
+                }
+            }
+
+            var newModel = Instantiate(_scoreAnimationUI, scorePos);
+            newModel.transform.position = scorePos.position;
+            newModel.gameObject.SetActive(true);
+            _scoreAnimationUIs.Add(newModel);
+
+            return _scoreAnimationUIs[_scoreAnimationUIs.Count - 1];
+        }
+
+        public void ReturnScoreUIToPool(ScoreAnimationUI scoreUI)
+        {
+            scoreUI.gameObject.SetActive(false);
+            scoreUI.transform.position = _scoreParent.position;
         }
 
         public void ClearModels()

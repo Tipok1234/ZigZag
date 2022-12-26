@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 using UnityEngine.UI;
 using TMPro;
 using Assets.Scripts.Manager;
@@ -14,6 +11,7 @@ namespace Assets.Scripts.UI
         [SerializeField] private Canvas _optionCanvas;
         [SerializeField] private Canvas _gameCanvas;
         [SerializeField] private TMP_Text _scoreText;
+        [SerializeField] private TMP_Text _scoreLifeText;
 
         private void Awake()
         {
@@ -27,6 +25,10 @@ namespace Assets.Scripts.UI
             Time.timeScale = 0f;
         }
 
+        public void SetupScoreLife(int score)
+        {
+            _scoreLifeText.text = "Try Life: " + score.ToString();
+        }
         public void SetupScore(int score)
         {
             _scoreText.text = "Score: " + score.ToString();

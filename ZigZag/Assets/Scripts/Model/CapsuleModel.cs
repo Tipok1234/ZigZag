@@ -6,9 +6,6 @@ namespace Assets.Scripts.Model
 {
     public class CapsuleModel : MonoBehaviour
     {
-        private void DestroyObject()
-        {
-            gameObject.SetActive(false);
-        }
+        //скрипт для расширения в дальнейшем.
     }
 }
