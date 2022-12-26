@@ -11,7 +11,6 @@ namespace Assets.Scripts.Manager
     {
         public event Action<Transform> GameStartedAction;
 
-        [SerializeField] private AnimationWindow _animationWindow;
         [SerializeField] private OptionWindow _optionWindow;
         [SerializeField] private MainWindow _mainWindow;
         [SerializeField] private GameWindow _gameWindow;
