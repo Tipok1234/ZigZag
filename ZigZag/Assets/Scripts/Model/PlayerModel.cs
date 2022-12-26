@@ -9,9 +9,6 @@ namespace Assets.Scripts.Model
     public class PlayerModel : MonoBehaviour
     {
         public event Action CollectedScoreAction;
-        public event Action AIMoveAction;
-
-        public bool IsAI => _isAI;
 
         [SerializeField] private float _sphereRadius;
         [SerializeField] private float _speed;

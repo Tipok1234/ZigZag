@@ -13,6 +13,7 @@ namespace Assets.Scripts.Manager
     {
         public event Action<Transform> GameStartedAction;
 
+        [SerializeField] private OptionWindow _optionWindow;
         [SerializeField] private MainWindow _mainWindow;
         [SerializeField] private GameWindow _gameWindow;
         [SerializeField] private RestartWindow _restartWindow;
@@ -41,18 +42,18 @@ namespace Assets.Scripts.Manager
             _gameWindow.SetupScore(_dataManager.Score);
             _mainWindow.StartGameAction += OnStartGame;
             _restartWindow.RestartGameAction += OnRestartGame;
-            OptionWindow.SetupColorAction += OnSetupColor;
-            OptionWindow.ClickAIStateAction += OnAIState;
+            _optionWindow.SetupColorAction += OnSetupColor;
+            _optionWindow.ClickAIStateAction += OnAIState;
         }
 
         private void OnDestroy()
         {
-            // _deathTrigger.DeathAction -= OnDeath;
+            _deathTrig.DeathAction -= OnDeath;
             _mainWindow.StartGameAction -= OnStartGame;
             _player.CollectedScoreAction -= OnCollectedScore;
             _restartWindow.RestartGameAction -= OnRestartGame;
-            OptionWindow.SetupColorAction -= OnSetupColor;
-            OptionWindow.ClickAIStateAction -= OnAIState;
+            _optionWindow.SetupColorAction -= OnSetupColor;
+            _optionWindow.ClickAIStateAction -= OnAIState;
         }
 
         private void Update()
@@ -93,6 +94,7 @@ namespace Assets.Scripts.Manager
 
         private void OnCollectedScore()
         {
+            AudioManager.Instance.PlaySound();
             _dataManager.AddScore(1);
             _gameWindow.SetupScore(_dataManager.Score);
         }

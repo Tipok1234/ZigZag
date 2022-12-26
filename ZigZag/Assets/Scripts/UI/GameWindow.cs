@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using Assets.Scripts.Manager;
 
 namespace Assets.Scripts.UI
 {
@@ -21,6 +22,7 @@ namespace Assets.Scripts.UI
 
         private void OptionMenu()
         {
+            AudioManager.Instance.PlaySound();
             _optionCanvas.enabled = !_optionCanvas.enabled;
             Time.timeScale = 0f;
         }

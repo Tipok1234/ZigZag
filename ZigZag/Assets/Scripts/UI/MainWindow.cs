@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Assets.Scripts.Manager;
 
 namespace Assets.Scripts.UI
 {
@@ -20,6 +21,7 @@ namespace Assets.Scripts.UI
 
         private void StartGame()
         {
+            AudioManager.Instance.PlaySound();
             _mainCanvas.enabled = !_mainCanvas.enabled;
             StartGameAction?.Invoke();
         }
